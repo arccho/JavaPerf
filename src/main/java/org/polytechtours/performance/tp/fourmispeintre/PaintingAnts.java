@@ -1,6 +1,6 @@
 package org.polytechtours.performance.tp.fourmispeintre;
 
-import java.awt.Color;
+
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -91,7 +91,6 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
   public void init() {
     URL lFileName;
     URLClassLoader urlLoader = (URLClassLoader) this.getClass().getClassLoader();
-
     // lecture des parametres de l'applet
 
     mDimension = getSize();
@@ -160,12 +159,12 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     // System.out.println(" chaine pStr: "+pStr);
     StringTokenizer lStrTok = new StringTokenizer(pStr, ":");
     // on lit une premiere valeur
-    lMin = Float.valueOf(lStrTok.nextToken()).floatValue();
+    lMin = Float.valueOf(lStrTok.nextToken());
     // System.out.println(" lMin: "+lMin);
     lResult = lMin;
     // on essaye d'en lire une deuxieme
     try {
-      lMax = Float.valueOf(lStrTok.nextToken()).floatValue();
+      lMax = Float.valueOf(lStrTok.nextToken());
       // System.out.println(" lMax: "+lMax);
       if (lMax > lMin) {
         // on choisit un nombre entre lMin et lMax
@@ -187,11 +186,11 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     int lMin, lMax, lResult;
     StringTokenizer lStrTok = new StringTokenizer(pStr, ":");
     // on lit une premiere valeur
-    lMin = Integer.valueOf(lStrTok.nextToken()).intValue();
+    lMin = Integer.valueOf(lStrTok.nextToken());
     lResult = lMin;
     // on essaye d'en lire une deuxieme
     try {
-      lMax = Integer.valueOf(lStrTok.nextToken()).intValue();
+      lMax = Integer.valueOf(lStrTok.nextToken());
       if (lMax > lMin) {
         // on choisit un nombre entre lMin et lMax
         lResult = (int) (Math.random() * (lMax - lMin + 1)) + lMin;
@@ -208,7 +207,8 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
   private void readParameterFourmis() {
     String lChaine;
     int R, G, B;
-    Color lCouleurDeposee, lCouleurSuivie;
+    //Color lCouleurDeposee, lCouleurSuivie;
+    int lRDeposee, lGDeposee, lBDeposee, lRSuivie, lGSuivie, lBSuivie;
     CFourmi lFourmi;
     float lProbaTD, lProbaG, lProbaD, lProbaSuivre, lSeuilLuminance;
     char lTypeDeplacement = ' ';
@@ -289,7 +289,10 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
         if (B == -1) {
           B = (int) (Math.random() * 256);
         }
-        lCouleurDeposee = new Color(R, G, B);
+        //lCouleurDeposee = new Color(R, G, B);
+        lRDeposee = R;
+        lGDeposee = G;
+        lBDeposee = B;
         System.out.print("Parametres de la fourmi " + lNbFourmis + ":(" + R + "," + G + "," + B + ")");
 
         // lecture de la couleur suivie
@@ -297,7 +300,10 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
         R = readIntParameter(lSTCouleurSuivi.nextToken());
         G = readIntParameter(lSTCouleurSuivi.nextToken());
         B = readIntParameter(lSTCouleurSuivi.nextToken());
-        lCouleurSuivie = new Color(R, G, B);
+        //lCouleurSuivie = new Color(R, G, B);
+        lRSuivie = R;
+        lGSuivie = G;
+        lBSuivie = B;
         System.out.print("(" + R + "," + G + "," + B + ")");
 
         // lecture de la position de la direction de départ et de la taille de
@@ -348,7 +354,7 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
             "(" + lTypeDeplacement + "," + lProbaG + "," + lProbaTD + "," + lProbaD + "," + lProbaSuivre + ");");
 
         // création de la fourmi
-        lFourmi = new CFourmi(lCouleurDeposee, lCouleurSuivie, lProbaTD, lProbaG, lProbaD, lProbaSuivre, mPainting,
+        lFourmi = new CFourmi(lRDeposee, lGDeposee, lBDeposee, lRSuivie, lGSuivie, lBSuivie, lProbaTD, lProbaG, lProbaD, lProbaSuivre, mPainting,
             lTypeDeplacement, lInit_x, lInit_y, lInitDirection, lTaille, lSeuilLuminance, this);
         mColonie.addElement(lFourmi);
         lNbFourmis++;
@@ -357,7 +363,8 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     {
 
       int i;
-      Color lTabColor[] = new Color[lNbFourmis];
+      //Color lTabColor[] = new Color[lNbFourmis];
+      int lTabColor[][] = new int[lNbFourmis][3];
       int lColor;
 
       // initialisation aléatoire de la couleur de chaque fourmi
@@ -365,7 +372,10 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
         R = (int) (Math.random() * 256);
         G = (int) (Math.random() * 256);
         B = (int) (Math.random() * 256);
-        lTabColor[i] = new Color(R, G, B);
+        //lTabColor[i] = new Color(R, G, B);
+        lTabColor[i][0] = R;
+        lTabColor[i][1] = G;
+        lTabColor[i][2] = B;
       }
 
       // construction des fourmis
@@ -400,15 +410,15 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
         lProbaSuivre = (float) (0.5 + 0.5 * Math.random());
 
         System.out.print(
-            "Random:(" + lTabColor[i].getRed() + "," + lTabColor[i].getGreen() + "," + lTabColor[i].getBlue() + ")");
-        System.out.print("(" + lTabColor[lColor].getRed() + "," + lTabColor[lColor].getGreen() + ","
-            + lTabColor[lColor].getBlue() + ")");
+            "Random:(" + lTabColor[i][0] + "," + lTabColor[i][1] + "," + lTabColor[i][2] + ")");
+        System.out.print("(" + lTabColor[lColor][0] + "," + lTabColor[lColor][1] + ","
+            + lTabColor[lColor][2] + ")");
         System.out.print("(" + lInit_x + "," + lInit_y + "," + lInitDirection + "," + lTaille + ")");
         System.out.println(
             "(" + lTypeDeplacement + "," + lProbaG + "," + lProbaTD + "," + lProbaD + "," + lProbaSuivre + ");");
 
         // création et ajout de la fourmi dans la colonie
-        lFourmi = new CFourmi(lTabColor[i], lTabColor[lColor], lProbaTD, lProbaG, lProbaD, lProbaSuivre, mPainting,
+        lFourmi = new CFourmi(lTabColor[i][0], lTabColor[i][1], lTabColor[i][2], lTabColor[lColor][0], lTabColor[lColor][1], lTabColor[lColor][2], lProbaTD, lProbaG, lProbaD, lProbaSuivre, mPainting,
             lTypeDeplacement, lInit_x, lInit_y, lInitDirection, lTaille, lSeuilLuminance, this);
         mColonie.addElement(lFourmi);
       }

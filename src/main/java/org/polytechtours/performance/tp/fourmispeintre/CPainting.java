@@ -34,9 +34,9 @@ import java.awt.event.MouseListener;
 public class CPainting extends Canvas implements MouseListener {
   private static final long serialVersionUID = 1L;
   // matrice servant pour le produit de convolution
-  static private float[][] mMatriceConv9 = new float[3][3];
-  static private float[][] mMatriceConv25 = new float[5][5];
-  static private float[][] mMatriceConv49 = new float[7][7];
+  static private int[][] mMatriceConv9 = new int[3][3];
+  static private int[][] mMatriceConv25 = new int[5][5];
+  static private int[][] mMatriceConv49 = new int[7][7];
   // Objet de type Graphics permettant de manipuler l'affichage du Canvas
   private Graphics mGraphics;
   // Objet ne servant que pour les bloc synchronized pour la manipulation du
@@ -45,9 +45,13 @@ public class CPainting extends Canvas implements MouseListener {
   // tableau des couleurs, il permert de conserver en memoire l'état de chaque
   // pixel du canvas, ce qui est necessaire au deplacemet des fourmi
   // il sert aussi pour la fonction paint du Canvas
-  private Color[][] mCouleurs;
+  //private Color[][] mCouleurs;
+  private int[][][] mCouleurs;
   // couleur du fond
-  private Color mCouleurFond = new Color(255, 255, 255);
+  //private Color mCouleurFond = new Color(255, 255, 255);
+  private int mRFond = 255;
+  private int mGFond = 255;
+  private int mBFond = 255;
   // dimensions
   private Dimension mDimension = new Dimension();
 
@@ -67,14 +71,18 @@ public class CPainting extends Canvas implements MouseListener {
     mDimension = pDimension;
     setBounds(new Rectangle(0, 0, mDimension.width, mDimension.height));
 
-    this.setBackground(mCouleurFond);
+    this.setBackground(new Color(mRFond, mGFond, mBFond));
 
     // initialisation de la matrice des couleurs
-    mCouleurs = new Color[mDimension.width][mDimension.height];
+    //mCouleurs = new Color[mDimension.width][mDimension.height];
+    mCouleurs = new int[mDimension.width][mDimension.height][3];
     synchronized (mMutexCouleurs) {
       for (i = 0; i != mDimension.width; i++) {
         for (j = 0; j != mDimension.height; j++) {
-          mCouleurs[i][j] = new Color(mCouleurFond.getRed(), mCouleurFond.getGreen(), mCouleurFond.getBlue());
+          //mCouleurs[i][j] = new Color(mRFond, mGFond, mBFond);
+          mCouleurs[i][j][0] = mRFond;
+          mCouleurs[i][j][1] = mGFond;
+          mCouleurs[i][j][2] = mBFond;
         }
       }
     }
@@ -85,7 +93,7 @@ public class CPainting extends Canvas implements MouseListener {
    * Titre : Color getCouleur Description : Cette fonction renvoie la couleur
    * d'une case
    ******************************************************************************/
-  public Color getCouleur(int x, int y) {
+  public int[]/*Color*/ getCouleur(int x, int y) {
     synchronized (mMutexCouleurs) {
       return mCouleurs[x][y];
     }
@@ -129,7 +137,10 @@ public class CPainting extends Canvas implements MouseListener {
 
       for (i = 0; i != mDimension.width; i++) {
         for (j = 0; j != mDimension.height; j++) {
-          mCouleurs[i][j] = new Color(mCouleurFond.getRed(), mCouleurFond.getGreen(), mCouleurFond.getBlue());
+          //mCouleurs[i][j] = new Color(mRFond, mGFond, mBFond);
+          mCouleurs[i][j][0] = mRFond;
+          mCouleurs[i][j][1] = mGFond;
+          mCouleurs[i][j][2] = mBFond;
         }
       }
     }
@@ -139,46 +150,46 @@ public class CPainting extends Canvas implements MouseListener {
     /*
      * 1 2 1 2 4 2 1 2 1
      */
-    CPainting.mMatriceConv9[0][0] = 1 / 16f;
-    CPainting.mMatriceConv9[0][1] = 2 / 16f;
-    CPainting.mMatriceConv9[0][2] = 1 / 16f;
-    CPainting.mMatriceConv9[1][0] = 2 / 16f;
-    CPainting.mMatriceConv9[1][1] = 4 / 16f;
-    CPainting.mMatriceConv9[1][2] = 2 / 16f;
-    CPainting.mMatriceConv9[2][0] = 1 / 16f;
-    CPainting.mMatriceConv9[2][1] = 2 / 16f;
-    CPainting.mMatriceConv9[2][2] = 1 / 16f;
+    CPainting.mMatriceConv9[0][0] = 1;
+    CPainting.mMatriceConv9[0][1] = 2;
+    CPainting.mMatriceConv9[0][2] = 1;
+    CPainting.mMatriceConv9[1][0] = 2;
+    CPainting.mMatriceConv9[1][1] = 4;
+    CPainting.mMatriceConv9[1][2] = 2;
+    CPainting.mMatriceConv9[2][0] = 1;
+    CPainting.mMatriceConv9[2][1] = 2;
+    CPainting.mMatriceConv9[2][2] = 1;
 
     // initialisation de la matrice de convolution : lissage moyen sur 25
     // cases
     /*
      * 1 1 2 1 1 1 2 3 2 1 2 3 4 3 2 1 2 3 2 1 1 1 2 1 1
      */
-    CPainting.mMatriceConv25[0][0] = 1 / 44f;
-    CPainting.mMatriceConv25[0][1] = 1 / 44f;
-    CPainting.mMatriceConv25[0][2] = 2 / 44f;
-    CPainting.mMatriceConv25[0][3] = 1 / 44f;
-    CPainting.mMatriceConv25[0][4] = 1 / 44f;
-    CPainting.mMatriceConv25[1][0] = 1 / 44f;
-    CPainting.mMatriceConv25[1][1] = 2 / 44f;
-    CPainting.mMatriceConv25[1][2] = 3 / 44f;
-    CPainting.mMatriceConv25[1][3] = 2 / 44f;
-    CPainting.mMatriceConv25[1][4] = 1 / 44f;
-    CPainting.mMatriceConv25[2][0] = 2 / 44f;
-    CPainting.mMatriceConv25[2][1] = 3 / 44f;
-    CPainting.mMatriceConv25[2][2] = 4 / 44f;
-    CPainting.mMatriceConv25[2][3] = 3 / 44f;
-    CPainting.mMatriceConv25[2][4] = 2 / 44f;
-    CPainting.mMatriceConv25[3][0] = 1 / 44f;
-    CPainting.mMatriceConv25[3][1] = 2 / 44f;
-    CPainting.mMatriceConv25[3][2] = 3 / 44f;
-    CPainting.mMatriceConv25[3][3] = 2 / 44f;
-    CPainting.mMatriceConv25[3][4] = 1 / 44f;
-    CPainting.mMatriceConv25[4][0] = 1 / 44f;
-    CPainting.mMatriceConv25[4][1] = 1 / 44f;
-    CPainting.mMatriceConv25[4][2] = 2 / 44f;
-    CPainting.mMatriceConv25[4][3] = 1 / 44f;
-    CPainting.mMatriceConv25[4][4] = 1 / 44f;
+    CPainting.mMatriceConv25[0][0] = 1;
+    CPainting.mMatriceConv25[0][1] = 1;
+    CPainting.mMatriceConv25[0][2] = 2;
+    CPainting.mMatriceConv25[0][3] = 1;
+    CPainting.mMatriceConv25[0][4] = 1;
+    CPainting.mMatriceConv25[1][0] = 1;
+    CPainting.mMatriceConv25[1][1] = 2;
+    CPainting.mMatriceConv25[1][2] = 3;
+    CPainting.mMatriceConv25[1][3] = 2;
+    CPainting.mMatriceConv25[1][4] = 1;
+    CPainting.mMatriceConv25[2][0] = 2;
+    CPainting.mMatriceConv25[2][1] = 3;
+    CPainting.mMatriceConv25[2][2] = 4;
+    CPainting.mMatriceConv25[2][3] = 3;
+    CPainting.mMatriceConv25[2][4] = 2;
+    CPainting.mMatriceConv25[3][0] = 1;
+    CPainting.mMatriceConv25[3][1] = 2;
+    CPainting.mMatriceConv25[3][2] = 3;
+    CPainting.mMatriceConv25[3][3] = 2;
+    CPainting.mMatriceConv25[3][4] = 1;
+    CPainting.mMatriceConv25[4][0] = 1;
+    CPainting.mMatriceConv25[4][1] = 1;
+    CPainting.mMatriceConv25[4][2] = 2;
+    CPainting.mMatriceConv25[4][3] = 1;
+    CPainting.mMatriceConv25[4][4] = 1;
 
     // initialisation de la matrice de convolution : lissage moyen sur 49
     // cases
@@ -186,61 +197,61 @@ public class CPainting extends Canvas implements MouseListener {
      * 1 1 2 2 2 1 1 1 2 3 4 3 2 1 2 3 4 5 4 3 2 2 4 5 8 5 4 2 2 3 4 5 4 3 2 1 2
      * 3 4 3 2 1 1 1 2 2 2 1 1
      */
-    CPainting.mMatriceConv49[0][0] = 1 / 128f;
-    CPainting.mMatriceConv49[0][1] = 1 / 128f;
-    CPainting.mMatriceConv49[0][2] = 2 / 128f;
-    CPainting.mMatriceConv49[0][3] = 2 / 128f;
-    CPainting.mMatriceConv49[0][4] = 2 / 128f;
-    CPainting.mMatriceConv49[0][5] = 1 / 128f;
-    CPainting.mMatriceConv49[0][6] = 1 / 128f;
+    CPainting.mMatriceConv49[0][0] = 1;
+    CPainting.mMatriceConv49[0][1] = 1;
+    CPainting.mMatriceConv49[0][2] = 2;
+    CPainting.mMatriceConv49[0][3] = 2;
+    CPainting.mMatriceConv49[0][4] = 2;
+    CPainting.mMatriceConv49[0][5] = 1;
+    CPainting.mMatriceConv49[0][6] = 1;
 
-    CPainting.mMatriceConv49[1][0] = 1 / 128f;
-    CPainting.mMatriceConv49[1][1] = 2 / 128f;
-    CPainting.mMatriceConv49[1][2] = 3 / 128f;
-    CPainting.mMatriceConv49[1][3] = 4 / 128f;
-    CPainting.mMatriceConv49[1][4] = 3 / 128f;
-    CPainting.mMatriceConv49[1][5] = 2 / 128f;
-    CPainting.mMatriceConv49[1][6] = 1 / 128f;
+    CPainting.mMatriceConv49[1][0] = 1;
+    CPainting.mMatriceConv49[1][1] = 2;
+    CPainting.mMatriceConv49[1][2] = 3;
+    CPainting.mMatriceConv49[1][3] = 4;
+    CPainting.mMatriceConv49[1][4] = 3;
+    CPainting.mMatriceConv49[1][5] = 2;
+    CPainting.mMatriceConv49[1][6] = 1;
 
-    CPainting.mMatriceConv49[2][0] = 2 / 128f;
-    CPainting.mMatriceConv49[2][1] = 3 / 128f;
-    CPainting.mMatriceConv49[2][2] = 4 / 128f;
-    CPainting.mMatriceConv49[2][3] = 5 / 128f;
-    CPainting.mMatriceConv49[2][4] = 4 / 128f;
-    CPainting.mMatriceConv49[2][5] = 3 / 128f;
-    CPainting.mMatriceConv49[2][6] = 2 / 128f;
+    CPainting.mMatriceConv49[2][0] = 2;
+    CPainting.mMatriceConv49[2][1] = 3;
+    CPainting.mMatriceConv49[2][2] = 4;
+    CPainting.mMatriceConv49[2][3] = 5;
+    CPainting.mMatriceConv49[2][4] = 4;
+    CPainting.mMatriceConv49[2][5] = 3;
+    CPainting.mMatriceConv49[2][6] = 2;
 
-    CPainting.mMatriceConv49[3][0] = 2 / 128f;
-    CPainting.mMatriceConv49[3][1] = 4 / 128f;
-    CPainting.mMatriceConv49[3][2] = 5 / 128f;
-    CPainting.mMatriceConv49[3][3] = 8 / 128f;
-    CPainting.mMatriceConv49[3][4] = 5 / 128f;
-    CPainting.mMatriceConv49[3][5] = 4 / 128f;
-    CPainting.mMatriceConv49[3][6] = 2 / 128f;
+    CPainting.mMatriceConv49[3][0] = 2;
+    CPainting.mMatriceConv49[3][1] = 4;
+    CPainting.mMatriceConv49[3][2] = 5;
+    CPainting.mMatriceConv49[3][3] = 8;
+    CPainting.mMatriceConv49[3][4] = 5;
+    CPainting.mMatriceConv49[3][5] = 4;
+    CPainting.mMatriceConv49[3][6] = 2;
 
-    CPainting.mMatriceConv49[4][0] = 2 / 128f;
-    CPainting.mMatriceConv49[4][1] = 3 / 128f;
-    CPainting.mMatriceConv49[4][2] = 4 / 128f;
-    CPainting.mMatriceConv49[4][3] = 5 / 128f;
-    CPainting.mMatriceConv49[4][4] = 4 / 128f;
-    CPainting.mMatriceConv49[4][5] = 3 / 128f;
-    CPainting.mMatriceConv49[4][6] = 2 / 128f;
+    CPainting.mMatriceConv49[4][0] = 2;
+    CPainting.mMatriceConv49[4][1] = 3;
+    CPainting.mMatriceConv49[4][2] = 4;
+    CPainting.mMatriceConv49[4][3] = 5;
+    CPainting.mMatriceConv49[4][4] = 4;
+    CPainting.mMatriceConv49[4][5] = 3;
+    CPainting.mMatriceConv49[4][6] = 2;
 
-    CPainting.mMatriceConv49[5][0] = 1 / 128f;
-    CPainting.mMatriceConv49[5][1] = 2 / 128f;
-    CPainting.mMatriceConv49[5][2] = 3 / 128f;
-    CPainting.mMatriceConv49[5][3] = 4 / 128f;
-    CPainting.mMatriceConv49[5][4] = 3 / 128f;
-    CPainting.mMatriceConv49[5][5] = 2 / 128f;
-    CPainting.mMatriceConv49[5][6] = 1 / 128f;
+    CPainting.mMatriceConv49[5][0] = 1;
+    CPainting.mMatriceConv49[5][1] = 2;
+    CPainting.mMatriceConv49[5][2] = 3;
+    CPainting.mMatriceConv49[5][3] = 4;
+    CPainting.mMatriceConv49[5][4] = 3;
+    CPainting.mMatriceConv49[5][5] = 2;
+    CPainting.mMatriceConv49[5][6] = 1;
 
-    CPainting.mMatriceConv49[6][0] = 1 / 128f;
-    CPainting.mMatriceConv49[6][1] = 1 / 128f;
-    CPainting.mMatriceConv49[6][2] = 2 / 128f;
-    CPainting.mMatriceConv49[6][3] = 2 / 128f;
-    CPainting.mMatriceConv49[6][4] = 2 / 128f;
-    CPainting.mMatriceConv49[6][5] = 1 / 128f;
-    CPainting.mMatriceConv49[6][6] = 1 / 128f;
+    CPainting.mMatriceConv49[6][0] = 1;
+    CPainting.mMatriceConv49[6][1] = 1;
+    CPainting.mMatriceConv49[6][2] = 2;
+    CPainting.mMatriceConv49[6][3] = 2;
+    CPainting.mMatriceConv49[6][4] = 2;
+    CPainting.mMatriceConv49[6][5] = 1;
+    CPainting.mMatriceConv49[6][6] = 1;
 
     mSuspendu = false;
   }
@@ -296,7 +307,7 @@ public class CPainting extends Canvas implements MouseListener {
     synchronized (mMutexCouleurs) {
       for (i = 0; i < mDimension.width; i++) {
         for (j = 0; j < mDimension.height; j++) {
-          pGraphics.setColor(mCouleurs[i][j]);
+          pGraphics.setColor(new Color(mCouleurs[i][j][0], mCouleurs[i][j][1], mCouleurs[i][j][2]));
           pGraphics.fillRect(i, j, 1, 1);
         }
       }
@@ -308,19 +319,25 @@ public class CPainting extends Canvas implements MouseListener {
    * fonction va colorer le pixel correspondant et mettre a jour le tabmleau des
    * couleurs
    ******************************************************************************/
-  public void setCouleur(int x, int y, Color c, int pTaille) {
+  public void setCouleur(int x, int y, int cR, int cG, int cB, int pTaille) {
     int i, j, k, l, m, n;
-    float R, G, B;
+    int R, G, B;
     Color lColor;
+    //Color c = new Color(cR, cG, cB);
 
     synchronized (mMutexCouleurs) {
       if (!mSuspendu) {
         // on colorie la case sur laquelle se trouve la fourmi
-        mGraphics.setColor(c);
+        mGraphics.setColor(new Color(cR, cG, cB));
         mGraphics.fillRect(x, y, 1, 1);
       }
 
-      mCouleurs[x][y] = c;
+      //mCouleurs[x][y] = c;
+      mCouleurs[x][y][0] = cR;
+      mCouleurs[x][y][1] = cG;
+      mCouleurs[x][y][2] = cB;
+
+
 
       // on fait diffuser la couleur :
       switch (pTaille) {
@@ -331,24 +348,27 @@ public class CPainting extends Canvas implements MouseListener {
           // produit de convolution discrete sur 9 cases
           for (i = 0; i < 3; i++) {
             for (j = 0; j < 3; j++) {
-              R = G = B = 0f;
+              R = G = B = 0;
 
               for (k = 0; k < 3; k++) {
                 for (l = 0; l < 3; l++) {
                   m = (x + i + k - 2 + mDimension.width) % mDimension.width;
                   n = (y + j + l - 2 + mDimension.height) % mDimension.height;
-                  R += CPainting.mMatriceConv9[k][l] * mCouleurs[m][n].getRed();
-                  G += CPainting.mMatriceConv9[k][l] * mCouleurs[m][n].getGreen();
-                  B += CPainting.mMatriceConv9[k][l] * mCouleurs[m][n].getBlue();
+                  R += CPainting.mMatriceConv9[k][l] * mCouleurs[m][n][0];
+                  G += CPainting.mMatriceConv9[k][l] * mCouleurs[m][n][1];
+                  B += CPainting.mMatriceConv9[k][l] * mCouleurs[m][n][2];
                 }
               }
-              lColor = new Color((int) R, (int) G, (int) B);
+              lColor = new Color(R / 16, G / 16,B / 16);
 
               mGraphics.setColor(lColor);
 
               m = (x + i - 1 + mDimension.width) % mDimension.width;
               n = (y + j - 1 + mDimension.height) % mDimension.height;
-              mCouleurs[m][n] = lColor;
+              //mCouleurs[m][n] = lColor;
+              mCouleurs[m][n][0] = R / 16;
+              mCouleurs[m][n][1] = G / 16;
+              mCouleurs[m][n][2] = B / 16;
               if (!mSuspendu) {
                 mGraphics.fillRect(m, n, 1, 1);
               }
@@ -359,23 +379,26 @@ public class CPainting extends Canvas implements MouseListener {
           // produit de convolution discrete sur 25 cases
           for (i = 0; i < 5; i++) {
             for (j = 0; j < 5; j++) {
-              R = G = B = 0f;
+              R = G = B = 0;
 
               for (k = 0; k < 5; k++) {
                 for (l = 0; l < 5; l++) {
                   m = (x + i + k - 4 + mDimension.width) % mDimension.width;
                   n = (y + j + l - 4 + mDimension.height) % mDimension.height;
-                  R += CPainting.mMatriceConv25[k][l] * mCouleurs[m][n].getRed();
-                  G += CPainting.mMatriceConv25[k][l] * mCouleurs[m][n].getGreen();
-                  B += CPainting.mMatriceConv25[k][l] * mCouleurs[m][n].getBlue();
+                  R += CPainting.mMatriceConv25[k][l] * mCouleurs[m][n][0];
+                  G += CPainting.mMatriceConv25[k][l] * mCouleurs[m][n][1];
+                  B += CPainting.mMatriceConv25[k][l] * mCouleurs[m][n][2];
                 }
               }
-              lColor = new Color((int) R, (int) G, (int) B);
+              lColor = new Color(R / 44,G / 44,B / 44);
               mGraphics.setColor(lColor);
               m = (x + i - 2 + mDimension.width) % mDimension.width;
               n = (y + j - 2 + mDimension.height) % mDimension.height;
 
-              mCouleurs[m][n] = lColor;
+              //mCouleurs[m][n] = lColor;
+              mCouleurs[m][n][0] =  R / 44;
+              mCouleurs[m][n][1] =  G / 44;
+              mCouleurs[m][n][2] =  B / 44;
               if (!mSuspendu) {
                 mGraphics.fillRect(m, n, 1, 1);
               }
@@ -387,23 +410,26 @@ public class CPainting extends Canvas implements MouseListener {
           // produit de convolution discrete sur 49 cases
           for (i = 0; i < 7; i++) {
             for (j = 0; j < 7; j++) {
-              R = G = B = 0f;
+              R = G = B = 0;
 
               for (k = 0; k < 7; k++) {
                 for (l = 0; l < 7; l++) {
                   m = (x + i + k - 6 + mDimension.width) % mDimension.width;
                   n = (y + j + l - 6 + mDimension.height) % mDimension.height;
-                  R += CPainting.mMatriceConv49[k][l] * mCouleurs[m][n].getRed();
-                  G += CPainting.mMatriceConv49[k][l] * mCouleurs[m][n].getGreen();
-                  B += CPainting.mMatriceConv49[k][l] * mCouleurs[m][n].getBlue();
+                  R += CPainting.mMatriceConv49[k][l] * mCouleurs[m][n][0];
+                  G += CPainting.mMatriceConv49[k][l] * mCouleurs[m][n][1];
+                  B += CPainting.mMatriceConv49[k][l] * mCouleurs[m][n][2];
                 }
               }
-              lColor = new Color((int) R, (int) G, (int) B);
-              mGraphics.setColor(lColor);
+              lColor = new Color(R / 128, G / 128,B / 128);
+              mGraphics.setColor(lColor);;
               m = (x + i - 3 + mDimension.width) % mDimension.width;
               n = (y + j - 3 + mDimension.height) % mDimension.height;
 
-              mCouleurs[m][n] = lColor;
+              //mCouleurs[m][n] = lColor;
+              mCouleurs[m][n][0] =  R / 128;
+              mCouleurs[m][n][1] =  G / 128;
+              mCouleurs[m][n][2] =  B / 128;
               if (!mSuspendu) {
                 mGraphics.fillRect(m, n, 1, 1);
               }
