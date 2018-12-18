@@ -9,7 +9,10 @@ package org.polytechtours.performance.tp.fourmispeintre;
  * the Source Creation and Management node. Right-click the template and choose
  * Open. You can then make changes to the template in the Source Editor.
  */
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.*;
 
 public class CColonie implements Runnable {
 

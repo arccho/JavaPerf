@@ -17,7 +17,7 @@ public class CFourmi {
   private int mGDeposee;
   private int mBDeposee;
 
-  private float mLuminanceCouleurSuivie;
+  private int mLuminanceCouleurSuivie;
   // objet graphique sur lequel les fourmis peuvent peindre
   private CPainting mPainting;
   // Coordonées de la fourmi
@@ -38,7 +38,7 @@ public class CFourmi {
   // l'applet
   private PaintingAnts mApplis;
   // seuil de luminance pour la détection de la couleur recherchée
-  private float mSeuilLuminance;
+  private int mSeuilLuminance;
   // nombre de déplacements de la fourmi
   private long mNbDeplacements;
 
@@ -46,14 +46,14 @@ public class CFourmi {
   */
   public CFourmi(int pRDeposee, int pGDeposee, int pBDeposee, int pRSuivie, int pGSuivie , int pBSuivie, float pProbaTD, float pProbaG, float pProbaD,
       float pProbaSuivre, CPainting pPainting, char pTypeDeplacement, float pInit_x, float pInit_y, int pInitDirection,
-      int pTaille, float pSeuilLuminance, PaintingAnts pApplis) {
+      int pTaille, int pSeuilLuminance, PaintingAnts pApplis) {
 
     //mCouleurDeposee = pCouleurDeposee;
     mRDeposee = pRDeposee;
     mGDeposee = pGDeposee;
     mBDeposee = pBDeposee;
     //mLuminanceCouleurSuivie = 0.2426f * pCouleurDeposee.getRed() + 0.7152f * pCouleurDeposee.getGreen() + 0.0722f * pCouleurDeposee.getBlue();
-    mLuminanceCouleurSuivie = 0.2426f * pRDeposee + 0.7152f * pGDeposee + 0.0722f * pBDeposee;
+    mLuminanceCouleurSuivie = 2426 * pRDeposee + 7152 * pGDeposee + 722 * pBDeposee;
     mPainting = pPainting;
     mApplis = pApplis;
 
@@ -111,7 +111,6 @@ public class CFourmi {
     int dir2 = 0;
     int i, j;
     //Color lCouleur;
-    int[] lCouleur;
     int lR;
     int lG;
     int lB;
@@ -270,11 +269,11 @@ public class CFourmi {
    */
   private boolean testCouleur(/*Color pCouleur*/int R, int G, int B) {
     boolean lReponse = false;
-    float lLuminance;
+    int lLuminance;
 
     /* on calcule la luminance */
     //lLuminance = 0.2426f * pCouleur.getRed() + 0.7152f * pCouleur.getGreen() + 0.0722f * pCouleur.getBlue();
-    lLuminance = 0.2426f * R + 0.7152f * G + 0.0722f * B;
+    lLuminance = 2426 * R + 7152 * G + 722 * B;
 
     /* test */
     if (Math.abs(mLuminanceCouleurSuivie - lLuminance) < mSeuilLuminance) {
