@@ -10,12 +10,15 @@ package org.polytechtours.performance.tp.fourmispeintre;
  * Open. You can then make changes to the template in the Source Editor.
  */
 import java.util.Vector;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class CColonie implements Runnable {
 
   private Boolean mContinue = Boolean.TRUE;
   private Vector<CFourmi> mColonie;
   private PaintingAnts mApplis;
+
+  //private ThreadPoolExecutor pool = new ThreadPoolExecutor();
 
   /** Creates a new instance of CColonie */
   public CColonie(Vector<CFourmi> pColonie, PaintingAnts pApplis) {
