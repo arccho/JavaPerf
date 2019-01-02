@@ -43,10 +43,10 @@ public class CFourmi {
   private long mNbDeplacements;
 
   /*************************************************************************************************
-  */
+   */
   public CFourmi(int pRDeposee, int pGDeposee, int pBDeposee, int pRSuivie, int pGSuivie , int pBSuivie, float pProbaTD, float pProbaG, float pProbaD,
-      float pProbaSuivre, CPainting pPainting, char pTypeDeplacement, float pInit_x, float pInit_y, int pInitDirection,
-      int pTaille, int pSeuilLuminance, PaintingAnts pApplis) {
+                 float pProbaSuivre, CPainting pPainting, char pTypeDeplacement, float pInit_x, float pInit_y, int pInitDirection,
+                 int pTaille, int pSeuilLuminance, PaintingAnts pApplis) {
 
     //mCouleurDeposee = pCouleurDeposee;
     mRDeposee = pRDeposee;
@@ -116,10 +116,10 @@ public class CFourmi {
       lB = (rgb) & 0x000000FF;
     } else {
       //lCouleur = new Color(mPainting.getCouleur(i, j));
-      int[] couleur = mPainting.getCouleur(i, j);
-      lR = couleur[0];
-      lG = couleur[1];
-      lB = couleur[2];
+      int couleur = mPainting.getCouleur(i, j);
+      lR = (couleur >> 16) & 0xFF;
+      lG = (couleur >> 8) & 0xFF;
+      lB = couleur & 0xFF;
     }
     if (testCouleur(lR, lG, lB)) {
       //dir[0] = 1;
@@ -137,10 +137,11 @@ public class CFourmi {
 
     } else {
       //lCouleur = new Color(mPainting.getCouleur(i, j).getRGB());
-      int[] couleur = mPainting.getCouleur(i, j);
-      lR = couleur[0];
-      lG = couleur[1];
-      lB = couleur[2];
+      int couleur = mPainting.getCouleur(i, j);
+      lR = (couleur >> 16) & 0xFF;
+      lG = (couleur >> 8) & 0xFF;
+      lB = couleur & 0xFF;
+    //System.out.println(lR + " " + lG + " " + lB);
     }
     if (testCouleur(lR, lG, lB)) {
       //dir[1] = 1;
@@ -156,10 +157,10 @@ public class CFourmi {
       lB = (rgb) & 0x000000FF;
     } else {
       //lCouleur = new Color(mPainting.getCouleur(i, j).getRGB());
-      int[] couleur = mPainting.getCouleur(i, j);
-      lR = couleur[0];
-      lG = couleur[1];
-      lB = couleur[2];
+      int couleur = mPainting.getCouleur(i, j);
+      lR = (couleur >> 16) & 0xFF;
+      lG = (couleur >> 8) & 0xFF;
+      lB = couleur & 0xFF;
 
     }
     if (testCouleur(lR, lG, lB)) {
@@ -213,20 +214,20 @@ public class CFourmi {
   }
 
   /*************************************************************************************************
-  */
+   */
   public long getNbDeplacements() {
     return mNbDeplacements;
   }
   /****************************************************************************/
 
   /*************************************************************************************************
-  */
+   */
   public int getX() {
     return x;
   }
 
   /*************************************************************************************************
-  */
+   */
   public int getY() {
     return y;
   }
