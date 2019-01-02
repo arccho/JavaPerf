@@ -466,6 +466,7 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
    */
   @Override
   public void start() {
+    mPause = false;
     mColony = new CColonie(mColonie, this);
     mThreadColony = new Thread(mColony);
     mThreadColony.setPriority(Thread.MIN_PRIORITY);
