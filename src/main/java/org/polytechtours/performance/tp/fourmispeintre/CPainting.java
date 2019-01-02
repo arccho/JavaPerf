@@ -274,14 +274,17 @@ public class CPainting extends Canvas implements MouseListener {
                   B += CPainting.mMatriceConv9[k][l] * (mCouleurs[mDimensionHeight*m + n] & 0xFF);
                 }
               }
-              lColor = new Color(R / 16, G / 16,B / 16);
+              R = R/16;
+              G = G/16;
+              B = B/16;
+              lColor = new Color(R, G, B);
 
               mGraphics.setColor(lColor);
 
               m = (x + i - 1 + mDimensionWidth) % mDimensionWidth;
               n = (y + j - 1 + mDimensionHeight) % mDimensionHeight;
               //mCouleurs[m][n] = lColor;
-              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R/16 << 16) | (G/16 << 8) | B/16;
+              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R << 16) | (G << 8) | B;
               if (!mSuspendu) {
                 mGraphics.fillRect(m, n, 1, 1);
               }
@@ -303,13 +306,18 @@ public class CPainting extends Canvas implements MouseListener {
                   B += CPainting.mMatriceConv25[k][l] * (mCouleurs[mDimensionHeight*m + n] & 0xFF);
                 }
               }
-              lColor = new Color(R / 44,G / 44,B / 44);
+
+              R = R/44;
+              G = G/44;
+              B = B/44;
+
+              lColor = new Color(R, G, B);
               mGraphics.setColor(lColor);
               m = (x + i - 2 + mDimensionWidth) % mDimensionWidth;
               n = (y + j - 2 + mDimensionHeight) % mDimensionHeight;
 
               //mCouleurs[m][n] = lColor;
-              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R/44 << 16) | (G/44 << 8) | B/44;
+              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R << 16) | (G << 8) | B;
               if (!mSuspendu) {
                 mGraphics.fillRect(m, n, 1, 1);
               }
@@ -332,13 +340,18 @@ public class CPainting extends Canvas implements MouseListener {
                   B += CPainting.mMatriceConv49[k][l] * (mCouleurs[mDimensionHeight*m + n] & 0xFF);
                 }
               }
-              lColor = new Color(R / 128, G / 128,B / 128);
+
+              R = R/128;
+              G = G/128;
+              B = B/128;
+
+              lColor = new Color(R, G, B);
               mGraphics.setColor(lColor);;
               m = (x + i - 3 + mDimensionWidth) % mDimensionWidth;
               n = (y + j - 3 + mDimensionHeight) % mDimensionHeight;
 
               //mCouleurs[m][n] = lColor;
-              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R/128 << 16) | (G/128 << 8) | B/128;
+              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R << 16) | (G << 8) | B;
               if (!mSuspendu) {
                 mGraphics.fillRect(m, n, 1, 1);
               }
