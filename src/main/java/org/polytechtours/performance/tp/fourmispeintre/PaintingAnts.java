@@ -77,7 +77,7 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     return mPause;
   }
 
-  public synchronized void IncrementFpsCounter() {
+  public void IncrementFpsCounter() {
     statisticsHandler.incrementFpsCounter();
   }
 
