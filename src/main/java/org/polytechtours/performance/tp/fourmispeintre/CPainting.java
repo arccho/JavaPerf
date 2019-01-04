@@ -220,7 +220,7 @@ public class CPainting extends Canvas implements MouseListener {
                   m = (x + i + k - 2 + mDimensionWidth) % mDimensionWidth;
                   n = (y + j + l - 2 + mDimensionHeight) % mDimensionHeight;
 
-                  RGB = bi.getRaster().getPixel(m,n, RGB);
+                  RGB = raster.getPixel(m,n, RGB);
 
                   R += CPainting.mMatriceConv9[k][l] * RGB[0];
                   G += CPainting.mMatriceConv9[k][l] * RGB[1];
@@ -247,7 +247,7 @@ public class CPainting extends Canvas implements MouseListener {
                 for (l = 0; l < 5; l++) {
                   m = (x + i + k - 4 + mDimensionWidth) % mDimensionWidth;
                   n = (y + j + l - 4 + mDimensionHeight) % mDimensionHeight;
-                  RGB = bi.getRaster().getPixel(m,n, RGB);
+                  RGB = raster.getPixel(m,n, RGB);
                   R += CPainting.mMatriceConv25[k][l] * RGB[0];
                   G += CPainting.mMatriceConv25[k][l] * RGB[1];
                   B += CPainting.mMatriceConv25[k][l] * RGB[2];
@@ -273,7 +273,7 @@ public class CPainting extends Canvas implements MouseListener {
                 for (l = 0; l < 7; l++) {
                   m = (x + i + k - 6 + mDimensionWidth) % mDimensionWidth;
                   n = (y + j + l - 6 + mDimensionHeight) % mDimensionHeight;
-                  RGB = bi.getRaster().getPixel(m,n, RGB);
+                  RGB = raster.getPixel(m,n, RGB);
                   R += CPainting.mMatriceConv49[k][l] * RGB[0];
                   G += CPainting.mMatriceConv49[k][l] * RGB[1];
                   B += CPainting.mMatriceConv49[k][l] * RGB[2];

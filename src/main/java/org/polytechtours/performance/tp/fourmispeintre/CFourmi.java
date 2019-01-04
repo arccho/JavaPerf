@@ -23,7 +23,6 @@ public class CFourmi {
   // Coordonées de la fourmi
   private int x, y;
   // Proba d'aller a gauche, en face, a droite, de suivre la couleur
-  //private float[] mProba = new float[4];
   private float mProba0;
   private float mProba1;
   private float mProba2;
