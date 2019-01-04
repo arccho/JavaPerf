@@ -10,7 +10,8 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
+import java.awt.image.DataBufferInt;
+import java.util.Arrays;
 
 /**
  * <p>
@@ -64,7 +65,7 @@ public class CPainting extends Canvas implements MouseListener {
           {1, 1, 2, 2, 2, 1, 1}};
 
   // couleur du fond
-  private int[] mFond = {255, 255, 255};
+  private int mFond = 0xFF000000 | (255 << 16) | (255 << 8) | 255;
 
   // dimensions;
   private int mDimensionWidth;
@@ -76,7 +77,8 @@ public class CPainting extends Canvas implements MouseListener {
 
   //permet de manipuler le tableau de couleurs pour l'affichage
   private BufferedImage bi;
-  private WritableRaster raster;
+  //le tableau des couleurs. Dans chaque élément, on stocke les 3 couleurs avec le décallage de bits
+  private int[] mCouleurs;
 
   /******************************************************************************
    * Titre : public CPainting() Description : Constructeur de la classe
@@ -90,7 +92,7 @@ public class CPainting extends Canvas implements MouseListener {
     setBounds(new Rectangle(0, 0, mDimensionWidth, mDimensionHeight));
 
     bi = new BufferedImage(mDimensionWidth, mDimensionHeight, BufferedImage.TYPE_INT_RGB);
-    raster = bi.getRaster();
+    mCouleurs = ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
   }
 
   /******************************************************************************
@@ -122,14 +124,8 @@ public class CPainting extends Canvas implements MouseListener {
    * et initialise le tableau des couleurs avec la couleur blanche
    ******************************************************************************/
   public void init() {
-    int i, j;
-
     // initialisation de la matrice des couleurs
-    for (i = 0; i < mDimensionWidth; i++) {
-      for (j = 0; j < mDimensionHeight; j++) {
-        raster.setPixel(i, j, mFond);
-      }
-    }
+    Arrays.fill(mCouleurs, mFond);
     mSuspendu = false;
   }
 
@@ -182,6 +178,7 @@ public class CPainting extends Canvas implements MouseListener {
   public void paint(Graphics pGraphics) {
     pGraphics.drawImage(bi, 0, 0, this);
     try {
+      //on attend un peu pour laisser le temps au composant d'afficher l'image
       Thread.sleep(50);
     } catch (InterruptedException e) {
       e.printStackTrace();
@@ -196,11 +193,9 @@ public class CPainting extends Canvas implements MouseListener {
   public void setCouleur(int x, int y, int cR, int cG, int cB, int pTaille) {
     int i, j, k, l, m, n;
     int R, G, B;
-    int[] RGB = {255, 255, 255};
       if (!mSuspendu) {
         // on colorie la case sur laquelle se trouve la fourmi
-        int[] cFourmi = {cR, cG, cB};
-        raster.setPixel(x, y, cFourmi);
+        mCouleurs[(x + mDimensionWidth*y)] = 0xFF000000 | (cR << 16) | (cG << 8) | cB;
       }
 
 
@@ -220,20 +215,18 @@ public class CPainting extends Canvas implements MouseListener {
                   m = (x + i + k - 2 + mDimensionWidth) % mDimensionWidth;
                   n = (y + j + l - 2 + mDimensionHeight) % mDimensionHeight;
 
-                  RGB = raster.getPixel(m,n, RGB);
-
-                  R += CPainting.mMatriceConv9[k][l] * RGB[0];
-                  G += CPainting.mMatriceConv9[k][l] * RGB[1];
-                  B += CPainting.mMatriceConv9[k][l] * RGB[2];
+                  R += CPainting.mMatriceConv9[k][l] * ((mCouleurs[mDimensionHeight*m + n] >> 16) & 0xFF);
+                  G += CPainting.mMatriceConv9[k][l] * ((mCouleurs[mDimensionHeight*m + n] >> 8) & 0xFF);
+                  B += CPainting.mMatriceConv9[k][l] * (mCouleurs[mDimensionHeight*m + n] & 0xFF);
                 }
               }
 
               m = (x + i - 1 + mDimensionWidth) % mDimensionWidth;
               n = (y + j - 1 + mDimensionHeight) % mDimensionHeight;
-              RGB[0] = R/16;
-              RGB[1] = G/16;
-              RGB[2] = B/16;
-              raster.setPixel(m, n, RGB);
+              R = R/16;
+              G = G/16;
+              B = B/16;
+              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R << 16) | (G << 8) | B;
             }
           }
           break;
@@ -247,19 +240,18 @@ public class CPainting extends Canvas implements MouseListener {
                 for (l = 0; l < 5; l++) {
                   m = (x + i + k - 4 + mDimensionWidth) % mDimensionWidth;
                   n = (y + j + l - 4 + mDimensionHeight) % mDimensionHeight;
-                  RGB = raster.getPixel(m,n, RGB);
-                  R += CPainting.mMatriceConv25[k][l] * RGB[0];
-                  G += CPainting.mMatriceConv25[k][l] * RGB[1];
-                  B += CPainting.mMatriceConv25[k][l] * RGB[2];
+                  R += CPainting.mMatriceConv25[k][l] * ((mCouleurs[mDimensionHeight*m + n] >> 16) & 0xFF);
+                  G += CPainting.mMatriceConv25[k][l] * ((mCouleurs[mDimensionHeight*m + n] >> 8) & 0xFF);
+                  B += CPainting.mMatriceConv25[k][l] * (mCouleurs[mDimensionHeight*m + n] & 0xFF);
                 }
               }
 
               m = (x + i - 2 + mDimensionWidth) % mDimensionWidth;
               n = (y + j - 2 + mDimensionHeight) % mDimensionHeight;
-              RGB[0] = R/44;
-              RGB[1] = G/44;
-              RGB[2] = B/44;
-              raster.setPixel(m, n, RGB);
+              R = R/44;
+              G = G/44;
+              B = B/44;
+              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R << 16) | (G << 8) | B;
             }
           }
           break;
@@ -273,19 +265,18 @@ public class CPainting extends Canvas implements MouseListener {
                 for (l = 0; l < 7; l++) {
                   m = (x + i + k - 6 + mDimensionWidth) % mDimensionWidth;
                   n = (y + j + l - 6 + mDimensionHeight) % mDimensionHeight;
-                  RGB = raster.getPixel(m,n, RGB);
-                  R += CPainting.mMatriceConv49[k][l] * RGB[0];
-                  G += CPainting.mMatriceConv49[k][l] * RGB[1];
-                  B += CPainting.mMatriceConv49[k][l] * RGB[2];
+                  R += CPainting.mMatriceConv49[k][l] * ((mCouleurs[m + mDimensionWidth*n] >> 16) & 0xFF);
+                  G += CPainting.mMatriceConv49[k][l] * ((mCouleurs[m + mDimensionWidth*n] >> 8) & 0xFF);
+                  B += CPainting.mMatriceConv49[k][l] * (mCouleurs[m + mDimensionWidth*n] & 0xFF);
                 }
               }
 
               m = (x + i - 3 + mDimensionWidth) % mDimensionWidth;
               n = (y + j - 3 + mDimensionHeight) % mDimensionHeight;
-              RGB[0] = R/128;
-              RGB[1] = G/128;
-              RGB[2] = B/128;
-              raster.setPixel(m, n, RGB);
+              R = R/128;
+              G = G/128;
+              B = B/128;
+              mCouleurs[m + mDimensionWidth*n] = 0xFF000000 | (R << 16) | (G << 8) | B;
             }
           }
           break;
