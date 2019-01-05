@@ -22,9 +22,9 @@ public class CColonie implements Runnable {
   private int id;
   private int maxNbFourmis;
   // Creation d'un pool de threads
-  private ExecutorService executor = new ThreadPoolExecutor(20, 20, 2,
-          TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-
+  //private ExecutorService executor = new ThreadPoolExecutor(10, 20, 20,
+          //TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+  private ExecutorService executor = Executors.newFixedThreadPool(20);
   private CyclicBarrier barrier;
 
 
@@ -70,7 +70,12 @@ public class CColonie implements Runnable {
 
     while (mContinue == true) {
       if (!mApplis.getPause()) {
-          executor.submit(new Runnable() {
+          for (CFourmi fourmi: mColonie) {
+              Future futur = executor.submit(new ExecutionHandler(barrier, fourmi));
+              futur = null;
+          }
+
+          /*executor.submit(new Runnable() {
               @Override
               public void run() {
                   int idFourmi = lireIdFourmi();
@@ -84,12 +89,12 @@ public class CColonie implements Runnable {
                       e.printStackTrace();
                   }
               }
-          });
+          });*/
       } else {
           // Dans le cas où l'application se met en pause, il faut arreter les taches en cours
           //    et liberer les ressources utilisees
           executor.shutdownNow();
-          resetIdFourmi();
+          //resetIdFourmi();
       }
     }
     // Si on sort du tant que, il faut que les ressources utilisées par le pool soit libérées
