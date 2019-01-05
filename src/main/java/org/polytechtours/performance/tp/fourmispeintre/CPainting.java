@@ -214,10 +214,9 @@ public class CPainting extends Canvas implements MouseListener {
                 for (l = 0; l < 3; l++) {
                   m = (x + i + k - 2 + mDimensionWidth) % mDimensionWidth;
                   n = (y + j + l - 2 + mDimensionHeight) % mDimensionHeight;
-
-                  R += CPainting.mMatriceConv9[k][l] * ((mCouleurs[mDimensionHeight*m + n] >> 16) & 0xFF);
-                  G += CPainting.mMatriceConv9[k][l] * ((mCouleurs[mDimensionHeight*m + n] >> 8) & 0xFF);
-                  B += CPainting.mMatriceConv9[k][l] * (mCouleurs[mDimensionHeight*m + n] & 0xFF);
+                  R += CPainting.mMatriceConv9[k][l] * ((mCouleurs[m + mDimensionWidth*n] >> 16) & 0xFF);
+                  G += CPainting.mMatriceConv9[k][l] * ((mCouleurs[m + mDimensionWidth*n] >> 8) & 0xFF);
+                  B += CPainting.mMatriceConv9[k][l] * (mCouleurs[m + mDimensionWidth*n] & 0xFF);
                 }
               }
 
@@ -226,7 +225,7 @@ public class CPainting extends Canvas implements MouseListener {
               R = R/16;
               G = G/16;
               B = B/16;
-              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R << 16) | (G << 8) | B;
+              mCouleurs[m + mDimensionWidth*n] = 0xFF000000 | (R << 16) | (G << 8) | B;
             }
           }
           break;
@@ -240,9 +239,9 @@ public class CPainting extends Canvas implements MouseListener {
                 for (l = 0; l < 5; l++) {
                   m = (x + i + k - 4 + mDimensionWidth) % mDimensionWidth;
                   n = (y + j + l - 4 + mDimensionHeight) % mDimensionHeight;
-                  R += CPainting.mMatriceConv25[k][l] * ((mCouleurs[mDimensionHeight*m + n] >> 16) & 0xFF);
-                  G += CPainting.mMatriceConv25[k][l] * ((mCouleurs[mDimensionHeight*m + n] >> 8) & 0xFF);
-                  B += CPainting.mMatriceConv25[k][l] * (mCouleurs[mDimensionHeight*m + n] & 0xFF);
+                  R += CPainting.mMatriceConv25[k][l] * ((mCouleurs[m + mDimensionWidth*n] >> 16) & 0xFF);
+                  G += CPainting.mMatriceConv25[k][l] * ((mCouleurs[m + mDimensionWidth*n] >> 8) & 0xFF);
+                  B += CPainting.mMatriceConv25[k][l] * (mCouleurs[m + mDimensionWidth*n] & 0xFF);
                 }
               }
 
@@ -251,7 +250,7 @@ public class CPainting extends Canvas implements MouseListener {
               R = R/44;
               G = G/44;
               B = B/44;
-              mCouleurs[mDimensionHeight*m + n] = 0xFF000000 | (R << 16) | (G << 8) | B;
+              mCouleurs[m + mDimensionWidth*n] = 0xFF000000 | (R << 16) | (G << 8) | B;
             }
           }
           break;
