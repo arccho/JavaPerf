@@ -22,10 +22,10 @@ public class CColonie implements Runnable {
   private int id;
   private int maxNbFourmis;
   // Creation d'un pool de threads
-  private ExecutorService executor = new ThreadPoolExecutor(4, 8, 2,
+  private ExecutorService executor = new ThreadPoolExecutor(20, 20, 2,
           TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
-  private CyclicBarrier barrier = new CyclicBarrier(20);
+  private CyclicBarrier barrier;
 
 
 
@@ -36,6 +36,7 @@ public class CColonie implements Runnable {
 
     id = 0;
     maxNbFourmis = pColonie.size();
+    barrier = new CyclicBarrier(maxNbFourmis);
   }
 
   public void pleaseStop() {

@@ -103,7 +103,7 @@ public class CFourmi {
    * Titre : void deplacer() Description : Fonction de deplacement de la fourmi
    *
    */
-  public void deplacer() {
+  public synchronized void deplacer() {
     float tirage, prob1, prob2, prob3, total;
     //int[] dir = new int[3];
     int dir0 = 0;
