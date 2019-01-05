@@ -3,6 +3,9 @@ package org.polytechtours.performance.tp.fourmispeintre;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CyclicBarrier;
 
+/*
+    Classe permettant d'executer le deplacement
+ */
 public class ExecutionHandler implements Callable {
     private CyclicBarrier barriere;
     CFourmi fourmi;

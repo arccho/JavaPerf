@@ -22,9 +22,9 @@ public class CColonie implements Runnable {
   private int id;
   private int maxNbFourmis;
   // Creation d'un pool de threads
-  //private ExecutorService executor = new ThreadPoolExecutor(10, 20, 20,
-          //TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-  private ExecutorService executor = Executors.newFixedThreadPool(20);
+  private ExecutorService executor = new ThreadPoolExecutor(10, 20, 20,
+          TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+  //private ExecutorService executor = Executors.newFixedThreadPool(20);
   private CyclicBarrier barrier;
 
 
@@ -58,6 +58,12 @@ public class CColonie implements Runnable {
       return val;
   }
 
+  // Permet à chaque thread de récupérer l'instance de fourmi pour effectuer le traitement
+  private synchronized CFourmi getFourmiFromVector(int id) {
+      if (id > 0 && id < mColonie.size())   return mColonie.get(id);
+      else return null;
+  }
+
   // Dans le cas où les taches executees sont annulees, on reprend
     // a partir de l'id ou on s'est arrete
   private void resetIdFourmi() {
@@ -70,16 +76,16 @@ public class CColonie implements Runnable {
 
     while (mContinue == true) {
       if (!mApplis.getPause()) {
-          for (CFourmi fourmi: mColonie) {
+          /*for (CFourmi fourmi: mColonie) {
               Future futur = executor.submit(new ExecutionHandler(barrier, fourmi));
               futur = null;
-          }
+          }*/
 
-          /*executor.submit(new Runnable() {
+          executor.submit(new Runnable() {
               @Override
               public void run() {
                   int idFourmi = lireIdFourmi();
-                  mColonie.get(idFourmi).deplacer();
+                  getFourmiFromVector(idFourmi).deplacer();
 
                   try {
                       barrier.await();
@@ -89,12 +95,12 @@ public class CColonie implements Runnable {
                       e.printStackTrace();
                   }
               }
-          });*/
+          });
       } else {
           // Dans le cas où l'application se met en pause, il faut arreter les taches en cours
           //    et liberer les ressources utilisees
           executor.shutdownNow();
-          //resetIdFourmi();
+          resetIdFourmi();
       }
     }
     // Si on sort du tant que, il faut que les ressources utilisées par le pool soit libérées
