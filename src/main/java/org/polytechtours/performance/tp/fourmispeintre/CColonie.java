@@ -10,10 +10,7 @@ package org.polytechtours.performance.tp.fourmispeintre;
  * Open. You can then make changes to the template in the Source Editor.
  */
 import java.util.Vector;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class CColonie implements Runnable {
 
@@ -23,11 +20,14 @@ public class CColonie implements Runnable {
 
   // gestion des fourmis
   private int id;
+  private int maxNbFourmis;
   // Creation d'un pool de threads
   private ExecutorService executor = new ThreadPoolExecutor(4, 8, 2,
           TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
 
-  //private ThreadPoolExecutor pool = new ThreadPoolExecutor();
+  private CyclicBarrier barrier = new CyclicBarrier(20);
+
+
 
   /** Creates a new instance of CColonie */
   public CColonie(Vector<CFourmi> pColonie, PaintingAnts pApplis) {
@@ -35,6 +35,7 @@ public class CColonie implements Runnable {
     mApplis = pApplis;
 
     id = 0;
+    maxNbFourmis = pColonie.size();
   }
 
   public void pleaseStop() {
@@ -46,14 +47,21 @@ public class CColonie implements Runnable {
     la trajectoire doit etre calculee. Chaque thread y accede de façon
     sequentielle
  */
-  public synchronized int lireIdFourmi() {
+  private synchronized int lireIdFourmi() {
       int val;
 
-      if (id == 20) id = 0;
+      if (id == maxNbFourmis) id = 0;
       val = id;
       id++;
 
       return val;
+  }
+
+  // Dans le cas où les taches executees sont annulees, on reprend
+    // a partir de l'id ou on s'est arrete
+  private void resetIdFourmi() {
+      if (id == 0) id = maxNbFourmis - 1;
+      else id -= 1;
   }
 
   @Override
@@ -61,16 +69,30 @@ public class CColonie implements Runnable {
 
     while (mContinue == true) {
       if (!mApplis.getPause()) {
-        for (int i = 0; i < mColonie.size(); i++) {
-          mColonie.get(i).deplacer();
-        }
-      } else {
-        /*
-         * try { Thread.sleep(100); } catch (InterruptedException e) { break; }
-         */
+          executor.submit(new Runnable() {
+              @Override
+              public void run() {
+                  int idFourmi = lireIdFourmi();
+                  mColonie.get(idFourmi).deplacer();
 
+                  try {
+                      barrier.await();
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  } catch (BrokenBarrierException e) {
+                      e.printStackTrace();
+                  }
+              }
+          });
+      } else {
+          // Dans le cas où l'application se met en pause, il faut arreter les taches en cours
+          //    et liberer les ressources utilisees
+          executor.shutdownNow();
+          resetIdFourmi();
       }
     }
+    // Si on sort du tant que, il faut que les ressources utilisées par le pool soit libérées
+      executor.shutdown();
   }
 
 }
