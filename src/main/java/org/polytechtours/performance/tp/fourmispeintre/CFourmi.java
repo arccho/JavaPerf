@@ -5,7 +5,7 @@ package org.polytechtours.performance.tp.fourmispeintre;
 import java.awt.Color;
 import java.util.Random;
 
-public class CFourmi implements Runnable{
+public class CFourmi {
   // Tableau des incrémentations à effectuer sur la position des fourmis
   // en fonction de la direction du deplacement
   static private int[][] mIncDirection = new int[8][2];
@@ -103,7 +103,7 @@ public class CFourmi implements Runnable{
    * Titre : void deplacer() Description : Fonction de deplacement de la fourmi
    *
    */
-  public synchronized void deplacer() {
+  public void deplacer() {
     float tirage, prob1, prob2, prob3, total;
     //int[] dir = new int[3];
     int dir0 = 0;
@@ -283,10 +283,5 @@ public class CFourmi implements Runnable{
     }
 
     return lReponse;
-  }
-
-  @Override
-  public void run() {
-    
   }
 }
