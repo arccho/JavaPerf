@@ -76,8 +76,8 @@ public class CColonie implements Runnable {
 
     while (mContinue == true) {
       if (!mApplis.getPause()) {
-          /*for (CFourmi fourmi: mColonie) {
-              Future futur = executor.submit(new ExecutionHandler(barrier, fourmi));
+          /*for (int i = 0; i < maxNbFourmis; i++) {
+              Future futur = executor.submit(new ExecutionHandler(barrier, getFourmiFromVector(i)));
               futur = null;
           }*/
 
