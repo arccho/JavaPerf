@@ -18,7 +18,6 @@ public class CColonie implements Runnable {
   private Vector<CFourmi> mColonie;
   private PaintingAnts mApplis;
 
-
   // Creation d'un pool de threads
   private ExecutorService executor;
   private int NbFourmis;
