@@ -1,8 +1,7 @@
 package org.polytechtours.performance.tp.fourmispeintre;
 
 
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -24,7 +23,7 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
 
   private Thread mApplis, mThreadColony;
 
-  private Dimension mDimension;
+  //private Dimension mDimension;
   private boolean mPause = false;
 
   public BufferedImage mBaseImage;
@@ -78,7 +77,7 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     return mPause;
   }
 
-  public synchronized void IncrementFpsCounter() {
+  public void IncrementFpsCounter() {
     statisticsHandler.incrementFpsCounter();
   }
 
@@ -93,11 +92,11 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     URLClassLoader urlLoader = (URLClassLoader) this.getClass().getClassLoader();
     // lecture des parametres de l'applet
 
-    mDimension = getSize();
-    mLargeur = mDimension.width;
-    mHauteur = mDimension.height;
+    //mDimension = getSize();
+    mLargeur = getWidth();
+    mHauteur = getHeight();
 
-    mPainting = new CPainting(mDimension, this);
+    mPainting = new CPainting(mLargeur, mHauteur, this);
     add(mPainting);
 
     // lecture de l'image
@@ -112,8 +111,8 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     if (mBaseImage != null) {
       mLargeur = mBaseImage.getWidth();
       mHauteur = mBaseImage.getHeight();
-      mDimension.setSize(mLargeur, mHauteur);
-      resize(mDimension);
+      //mDimension.setSize(mLargeur, mHauteur);
+      resize(mLargeur, mHauteur);
     }
 
     readParameterFourmis();
@@ -210,7 +209,8 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     //Color lCouleurDeposee, lCouleurSuivie;
     int lRDeposee, lGDeposee, lBDeposee, lRSuivie, lGSuivie, lBSuivie;
     CFourmi lFourmi;
-    float lProbaTD, lProbaG, lProbaD, lProbaSuivre, lSeuilLuminance;
+    float lProbaTD, lProbaG, lProbaD, lProbaSuivre;
+    int lSeuilLuminance;
     char lTypeDeplacement = ' ';
     int lInitDirection, lTaille;
     float lInit_x, lInit_y;
@@ -223,10 +223,10 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
     // N : seuil de luminance : -1 = random(2..60), x..y = random(x..y)
     lChaine = getParameter("SeuilLuminance");
     if (lChaine != null) {
-      lSeuilLuminance = readFloatParameter(lChaine);
+      lSeuilLuminance = (int)(readFloatParameter(lChaine)) * 10000;
     } else {
       // si seuil de luminance n'est pas défini
-      lSeuilLuminance = 40f;
+      lSeuilLuminance = 400000;
     }
     System.out.println("Seuil de luminance:" + lSeuilLuminance);
 
@@ -466,6 +466,7 @@ public class PaintingAnts extends java.applet.Applet implements Runnable {
    */
   @Override
   public void start() {
+    mPause = false;
     mColony = new CColonie(mColonie, this);
     mThreadColony = new Thread(mColony);
     mThreadColony.setPriority(Thread.MIN_PRIORITY);

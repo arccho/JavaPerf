@@ -5,10 +5,10 @@ package org.polytechtours.performance.tp.fourmispeintre;
 import java.awt.Color;
 import java.util.Random;
 
-public class CFourmi implements Runnable{
+public class CFourmi {
   // Tableau des incrémentations à effectuer sur la position des fourmis
   // en fonction de la direction du deplacement
-  static private int[][] mIncDirection = new int[8][2];
+  static private int[][] mIncDirection = {{0, -1}, {1, -1}, {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}};
   // le generateur aléatoire (Random est thread safe donc on la partage)
   private static Random GenerateurAleatoire = new Random();
   // couleur déposé par la fourmi
@@ -17,13 +17,12 @@ public class CFourmi implements Runnable{
   private int mGDeposee;
   private int mBDeposee;
 
-  private float mLuminanceCouleurSuivie;
+  private int mLuminanceCouleurSuivie;
   // objet graphique sur lequel les fourmis peuvent peindre
   private CPainting mPainting;
   // Coordonées de la fourmi
   private int x, y;
   // Proba d'aller a gauche, en face, a droite, de suivre la couleur
-  //private float[] mProba = new float[4];
   private float mProba0;
   private float mProba1;
   private float mProba2;
@@ -38,22 +37,22 @@ public class CFourmi implements Runnable{
   // l'applet
   private PaintingAnts mApplis;
   // seuil de luminance pour la détection de la couleur recherchée
-  private float mSeuilLuminance;
+  private int mSeuilLuminance;
   // nombre de déplacements de la fourmi
   private long mNbDeplacements;
 
   /*************************************************************************************************
-  */
+   */
   public CFourmi(int pRDeposee, int pGDeposee, int pBDeposee, int pRSuivie, int pGSuivie , int pBSuivie, float pProbaTD, float pProbaG, float pProbaD,
-      float pProbaSuivre, CPainting pPainting, char pTypeDeplacement, float pInit_x, float pInit_y, int pInitDirection,
-      int pTaille, float pSeuilLuminance, PaintingAnts pApplis) {
+                 float pProbaSuivre, CPainting pPainting, char pTypeDeplacement, float pInit_x, float pInit_y, int pInitDirection,
+                 int pTaille, int pSeuilLuminance, PaintingAnts pApplis) {
 
     //mCouleurDeposee = pCouleurDeposee;
     mRDeposee = pRDeposee;
     mGDeposee = pGDeposee;
     mBDeposee = pBDeposee;
     //mLuminanceCouleurSuivie = 0.2426f * pCouleurDeposee.getRed() + 0.7152f * pCouleurDeposee.getGreen() + 0.0722f * pCouleurDeposee.getBlue();
-    mLuminanceCouleurSuivie = 0.2426f * pRDeposee + 0.7152f * pGDeposee + 0.0722f * pBDeposee;
+    mLuminanceCouleurSuivie = 2426 * pRDeposee + 7152 * pGDeposee + 722 * pBDeposee;
     mPainting = pPainting;
     mApplis = pApplis;
 
@@ -77,24 +76,6 @@ public class CFourmi implements Runnable{
       mDecalDir = 1;
     }
 
-    // initialisation du tableau des directions
-    CFourmi.mIncDirection[0][0] = 0;
-    CFourmi.mIncDirection[0][1] = -1;
-    CFourmi.mIncDirection[1][0] = 1;
-    CFourmi.mIncDirection[1][1] = -1;
-    CFourmi.mIncDirection[2][0] = 1;
-    CFourmi.mIncDirection[2][1] = 0;
-    CFourmi.mIncDirection[3][0] = 1;
-    CFourmi.mIncDirection[3][1] = 1;
-    CFourmi.mIncDirection[4][0] = 0;
-    CFourmi.mIncDirection[4][1] = 1;
-    CFourmi.mIncDirection[5][0] = -1;
-    CFourmi.mIncDirection[5][1] = 1;
-    CFourmi.mIncDirection[6][0] = -1;
-    CFourmi.mIncDirection[6][1] = 0;
-    CFourmi.mIncDirection[7][0] = -1;
-    CFourmi.mIncDirection[7][1] = -1;
-
     mSeuilLuminance = pSeuilLuminance;
     mNbDeplacements = 0;
   }
@@ -103,7 +84,7 @@ public class CFourmi implements Runnable{
    * Titre : void deplacer() Description : Fonction de deplacement de la fourmi
    *
    */
-  public synchronized void deplacer() {
+  public void deplacer() {
     float tirage, prob1, prob2, prob3, total;
     //int[] dir = new int[3];
     int dir0 = 0;
@@ -111,7 +92,6 @@ public class CFourmi implements Runnable{
     int dir2 = 0;
     int i, j;
     //Color lCouleur;
-    int[] lCouleur;
     int lR;
     int lG;
     int lB;
@@ -135,10 +115,10 @@ public class CFourmi implements Runnable{
       lB = (rgb) & 0x000000FF;
     } else {
       //lCouleur = new Color(mPainting.getCouleur(i, j));
-      int[] couleur = mPainting.getCouleur(i, j);
-      lR = couleur[0];
-      lG = couleur[1];
-      lB = couleur[2];
+      int couleur = mPainting.getCouleur(i, j);
+      lR = (couleur >> 16) & 0xFF;
+      lG = (couleur >> 8) & 0xFF;
+      lB = couleur & 0xFF;
     }
     if (testCouleur(lR, lG, lB)) {
       //dir[0] = 1;
@@ -156,10 +136,11 @@ public class CFourmi implements Runnable{
 
     } else {
       //lCouleur = new Color(mPainting.getCouleur(i, j).getRGB());
-      int[] couleur = mPainting.getCouleur(i, j);
-      lR = couleur[0];
-      lG = couleur[1];
-      lB = couleur[2];
+      int couleur = mPainting.getCouleur(i, j);
+      lR = (couleur >> 16) & 0xFF;
+      lG = (couleur >> 8) & 0xFF;
+      lB = couleur & 0xFF;
+    //System.out.println(lR + " " + lG + " " + lB);
     }
     if (testCouleur(lR, lG, lB)) {
       //dir[1] = 1;
@@ -175,10 +156,10 @@ public class CFourmi implements Runnable{
       lB = (rgb) & 0x000000FF;
     } else {
       //lCouleur = new Color(mPainting.getCouleur(i, j).getRGB());
-      int[] couleur = mPainting.getCouleur(i, j);
-      lR = couleur[0];
-      lG = couleur[1];
-      lB = couleur[2];
+      int couleur = mPainting.getCouleur(i, j);
+      lR = (couleur >> 16) & 0xFF;
+      lG = (couleur >> 8) & 0xFF;
+      lB = couleur & 0xFF;
 
     }
     if (testCouleur(lR, lG, lB)) {
@@ -232,20 +213,20 @@ public class CFourmi implements Runnable{
   }
 
   /*************************************************************************************************
-  */
+   */
   public long getNbDeplacements() {
     return mNbDeplacements;
   }
   /****************************************************************************/
 
   /*************************************************************************************************
-  */
+   */
   public int getX() {
     return x;
   }
 
   /*************************************************************************************************
-  */
+   */
   public int getY() {
     return y;
   }
@@ -270,11 +251,11 @@ public class CFourmi implements Runnable{
    */
   private boolean testCouleur(/*Color pCouleur*/int R, int G, int B) {
     boolean lReponse = false;
-    float lLuminance;
+    int lLuminance;
 
     /* on calcule la luminance */
     //lLuminance = 0.2426f * pCouleur.getRed() + 0.7152f * pCouleur.getGreen() + 0.0722f * pCouleur.getBlue();
-    lLuminance = 0.2426f * R + 0.7152f * G + 0.0722f * B;
+    lLuminance = 2426 * R + 7152 * G + 722 * B;
 
     /* test */
     if (Math.abs(mLuminanceCouleurSuivie - lLuminance) < mSeuilLuminance) {
@@ -283,10 +264,5 @@ public class CFourmi implements Runnable{
     }
 
     return lReponse;
-  }
-
-  @Override
-  public void run() {
-    
   }
 }
