@@ -49,14 +49,17 @@ public class CColonie implements Runnable {
         executor.execute(new Runnable() {
           @Override
           public void run() {
+            int id = (int)Thread.currentThread().getId()%NbFourmis;
             while (mContinue == true) {
-              mColonie.get((int)Thread.currentThread().getId()%NbFourmis).deplacer();
-              try {
-                barrier.await();
-              } catch (InterruptedException e) {
-                e.printStackTrace();
-              } catch (BrokenBarrierException e) {
-                e.printStackTrace();
+              if (!mApplis.getPause()) {
+                mColonie.get(id).deplacer();
+                try {
+                  barrier.await();
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                  e.printStackTrace();
+                }
               }
             }
           }
